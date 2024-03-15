@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semáforo</title>
+    <link rel="stylesheet" href="endpoint.css">
+
+    <style>
+        body {
+            background-image: url(img/fundopista.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+           
+            position: relative;
+        }
+ 
+     
+ 
+        #emojiContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+ 
+        .emoji {
+            font-size: 24px;
+            position: absolute;
+            animation: fallDown 10s linear infinite;
+            pointer-events: none;
+        }
+ 
+        @keyframes fallDown {
+            0% {
+                transform: translate(-100vw, -100vh);
+            }
+ 
+            100% {
+                transform: translate(100vw, 100vh);
+            }
+        }
+ 
+       
+    </style>
+</head>
+<body>
+
+    <audio id="som" src="audio/somcarro.mp3"></audio>
+    <nav><p>CONTROLE DE TRÂNSITO</p>
+        </nav>  
+    <div id="imageContainer">
+    </div>
+    <footer>blablablablablablabla</footer> 
+    <div id="emojiContainer"></div>
+  
+</body>
+
+
+<script>
+    function carregarImagem() {
+        fetch('https://niloweb.com.br/transit-room/api/reg_endpoint.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0 && data[0].res && data[0].dia) {
+                    const imagem = document.createElement('img');
+                    const condition = data[0].res;
+                    switch(condition) {
+                        case 'A':
+                            imagem.src = "img/carroamarelo.png";
+                            break;
+                        case 'B':
+                            imagem.src = "img/carrovermelho.png";
+                            break;
+                        case 'L':
+                            imagem.src = "img/carroverde.png";
+                            break;
+                        default:
+                            console.error('Condição desconhecida:', condition);
+                    }
+                    document.getElementById('imageContainer').appendChild(imagem);
+                } else {
+                    console.error('Erro ao carregar imagem da API.');
+                }
+                
+            })
+
+            .catch(error => {
+                console.error('Erro ao conectar à API:', error);
+            });
+
+}
+            function criarEmoji() {
+            const emoji = document.createElement('span');
+            emoji.innerHTML = '🏁';
+            emoji.className = 'emoji';
+            emoji.style.left = Math.random() * 100 + 'vw'; // Posição horizontal aleatória
+            emoji.style.top = Math.random() * 100 + 'vh'; // Posição vertical aleatória
+            emoji.style.animationDuration = (Math.random() * 10 + 5) + 's'; // Duração de animação aleatória entre 5s e 15s
+            document.getElementById('emojiContainer').appendChild(emoji);
+        }
+ 
+        function gerarEmojis(qtd) {
+            for (let i = 0; i < qtd; i++) {
+                criarEmoji();
+            }
+        }
+ 
+        window.onload = function () {
+            carregarImagem(); // Carregar imagem da API
+            gerarEmojis(100); // Gerar cerca de 100 emojis de morangos
+        };
+ 
+  
+        function playSound() {
+    const som = document.getElementById('som');
+    som.play();
+}
+
+    </script>
+    <footer >
+        <p></p>
+    </footer>
+</body>
+
+</html>
